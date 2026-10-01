@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I'm sorry 💌</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg1:#ffe3ec; --bg2:#e6dcff; --ink:#4a2c4f; --pink:#ff6f9c; --soft:#fff8fb; }
+  body {
+    font-family: 'Fredoka', sans-serif; color: var(--ink); min-height: 100vh;
+    background: linear-gradient(160deg, var(--bg1), var(--bg2)); overflow-x: hidden;
+  }
+  .card-sorry {
+    background: var(--soft); border: 0; border-radius: 2rem;
+    box-shadow: 0 12px 40px rgba(120, 60, 120, .18); max-width: 520px;
+  }
+  h1 { font-family: 'Caveat', cursive; font-size: clamp(2.4rem, 9vw, 3.6rem); color: var(--pink); }
+  .gif-box {
+    width: 220px; height: 220px; border-radius: 1.5rem; overflow: hidden; margin: 0 auto;
+    background: #ffd6e5; display: flex; align-items: center; justify-content: center; font-size: 5rem;
+  }
+  .gif-box img { width: 100%; height: 100%; object-fit: cover; }
+  #msg { min-height: 7.5rem; line-height: 1.6; }
+  .btn-yes { background: var(--pink); border: 0; color: #fff; border-radius: 2rem; padding: .7rem 1.6rem; font-weight: 600; }
+  .btn-yes:hover { background: #ff4f86; color: #fff; }
+  .btn-no { border-radius: 2rem; padding: .7rem 1.6rem; }
+  #noBtn { position: relative; transition: transform .15s ease; }
+  .heart { position: fixed; top: -2rem; pointer-events: none; animation: fall linear forwards; z-index: 9; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: .8; } }
+  @media (prefers-reduced-motion: reduce) { .heart { display: none; } #noBtn { transition: none; } }
+</style>
+</head>
+<body class="d-flex align-items-center justify-content-center p-3">
+
+<main class="card card-sorry p-4 p-md-5 text-center w-100">
+  <h1 id="title">Hey <span id="friendName">Row</span>...</h1>
+
+  <div class="gif-box my-3" id="gifBox"></div>
+
+  <p id="msg" class="fs-5 mb-4"></p>
+
+  <div id="actions" class="d-flex flex-wrap gap-3 justify-content-center">
+    <button id="nextBtn" class="btn btn-yes">Okay, go on 🥺</button>
+  </div>
+</main>
+
+<div class="modal fade" id="noModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered"><div class="modal-content text-center p-4" style="border-radius:1.5rem">
+    <div class="fs-1">🥹</div>
+    <p class="fs-5 mb-3">That's fair. Take all the time you need. I'll be here.</p>
+    <button class="btn btn-yes" data-bs-dismiss="modal">Okay</button>
+  </div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ====== EDIT THIS PART ====== */
+const FRIEND_NAME = "Row";   // her name
+const MY_NAME = "Me";           // your name
+// Each step: a message, a gif URL (paste Giphy/Tenor direct .gif links), and an emoji fallback
+const STEPS = [
+  { text: "I've been thinking about what happened, and I really owe you an apology.", gif: "", emoji: "🥺" },
+  { text: "I'm sorry You didn't deserve that, and I hate that I hurt you.", gif: "", emoji: "😢" },
+  { text: "You mean a lot to me, and I'd never want to lose a friend like you. I'll do better, promise.", gif: "", emoji: "🫶" }
+];
+const FINAL = { text: "Thank you for hearing me out. Friends again? 💖", gif: "", emoji: "🥰" };
+/* ============================ */
+
+document.getElementById('friendName').textContent = FRIEND_NAME;
+const gifBox = document.getElementById('gifBox');
+const msg = document.getElementById('msg');
+const actions = document.getElementById('actions');
+let i = 0;
+
+function show(step) {
+  msg.textContent = step.text;
+  gifBox.textContent = step.emoji;
+  if (step.gif) {
+    const img = new Image();
+    img.alt = "";
+    img.onload = () => { gifBox.textContent = ""; gifBox.appendChild(img); };
+    img.src = step.gif; // falls back to the emoji if it fails to load
+  }
+}
+
+function hearts() {
+  const set = ["💖", "💗", "💕", "🌸", "✨"];
+  for (let n = 0; n < 40; n++) {
+    const h = document.createElement('span');
+    h.className = 'heart';
+    h.textContent = set[Math.floor(Math.random() * set.length)];
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+    h.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+    h.style.animationDelay = (Math.random() * 1.2) + 's';
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 7000);
+  }
+}
+
+function showChoice() {
+  show({ text: "So... can you forgive me?", gif: "", emoji: "🥺👉👈" });
+  actions.innerHTML = `
+    <button id="yesBtn" class="btn btn-yes">Yes, I forgive you 💖</button>
+    <button id="noBtn" class="btn btn-outline-secondary btn-no">Not yet</button>`;
+  document.getElementById('yesBtn').onclick = () => {
+    show(FINAL);
+    document.getElementById('title').textContent = "Yayyy! 🎉";
+    actions.innerHTML = `<p class="mb-0" style="font-family:'Caveat',cursive;font-size:1.8rem">— ${MY_NAME}</p>`;
+    hearts();
+  };
+  const no = document.getElementById('noBtn');
+  let dodges = 0;
+  no.addEventListener('mouseenter', dodge);
+  no.addEventListener('touchstart', e => { if (dodges < 4) { e.preventDefault(); dodge(); } }, { passive: false });
+  no.addEventListener('click', () => new bootstrap.Modal('#noModal').show());
+  function dodge() {
+    if (dodges++ >= 4) return; // after a few dodges it lets her click it
+    no.style.transform = `translate(${(Math.random() - .5) * 160}px, ${(Math.random() - .5) * 80}px)`;
+  }
+}
+
+document.getElementById('nextBtn').onclick = () => {
+  i++;
+  if (i < STEPS.length) show(STEPS[i]); else showChoice();
+};
+
+show(STEPS[0]);
+</script>
+</body>
+</html>
